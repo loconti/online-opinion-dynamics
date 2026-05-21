@@ -1,0 +1,29 @@
+# Install all packages at once
+install.packages(c(
+  "lsa",
+  "philentropy", 
+  "matrixcalc",
+  "doParallel",
+  "scales",
+  "gtools",
+  "ggplot2",
+  "gplots",
+  "plotly",
+  "tm",
+  "SnowballC",
+  "wordcloud",
+  "RColorBrewer",
+  "tidyr",
+  "tidyverse",
+  "tidytext",
+  "dplyr",
+  "data.table",
+  "data.tree",
+  "Rtsne",
+  "cluster",
+  "dbscan",
+  "gridExtra",
+  "stringr",
+  "quanteda"
+)#, repos = "https://cran.r-project.org/"
+)

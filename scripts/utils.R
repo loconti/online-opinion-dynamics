@@ -505,8 +505,11 @@ printTermsPerTopic <- function(model, top_n = 10, period) {
 
 getPredictions <- function(T_, contentColumnNumber = 3) {
   colnames(T_)[contentColumnNumber] = "text"
+    
+  # Converti la colonna a character
+  T_$text <- as.character(T_$text)
   
-  corp_reddit <- corpus(T_)
+  corp_reddit <- corpus(T_,text_field="text")
   dfmat_reddit <- dfm(corp_reddit, remove_numbers = TRUE, remove_punct = TRUE, remove_url = TRUE,
                       remove = c('*.tt', '*.uk', '*.com', 'rt')) %>%
     dfm_remove(c(stopwords('en'))) %>% 
