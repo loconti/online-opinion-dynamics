@@ -81,3 +81,54 @@ for i, (cat, val) in enumerate(zip(categories_s, values_s)):
 plt.tight_layout()
 plt.savefig(data_dir / "pro_vs_anti_comparison.png", dpi=300, bbox_inches='tight')
 print("\n✓ Bar graph saved to: Data/pro_vs_anti_comparison.png")
+
+from collections import defaultdict
+
+# 1. Raccogli tutte le leave_probability per ogni utente
+user_probs = defaultdict(list)
+
+for _, row in submissions_df.iterrows():
+    user_probs[row["Author"]].append(row["leave_probability"])
+
+for _, row in comments_df.iterrows():
+    user_probs[row["Author"]].append(row["leave_probability"])
+
+# 2. Calcola la probabilità media per utente
+user_avg_prob = {user: sum(probs)/len(probs) for user, probs in user_probs.items()}
+
+# 3. Assegna la label in base alle soglie (0.25 e 0.75)
+def get_label(prob):
+    if prob < 0.25:
+        return "Anti"        # "Against-Brexit"
+    elif prob > 0.75:
+        return "Pro"         # "Pro-Brexit"
+    else:
+        return "Neutral"
+
+user_label = {user: get_label(prob) for user, prob in user_avg_prob.items()}
+
+# 4. Conta le occorrenze per categoria
+label_counts = pd.Series(list(user_label.values())).value_counts()
+print("Distribuzione nodi:\n", label_counts)
+
+# 5. Grafico a barre (stile identico all'analisi originale)
+fig, ax = plt.subplots(figsize=(8, 6))
+
+categories = label_counts.index.tolist()   # es. ['Pro', 'Anti', 'Neutral']
+values = label_counts.values.tolist()
+colors = ['#2ecc71' if c == 'Pro' else '#e74c3c' if c == 'Anti' else '#95a5a6' for c in categories]
+
+ax.bar(categories, values, color=colors, edgecolor='black', linewidth=1.5)
+ax.set_title('Nodi del grafo (utenti): Pro vs Anti vs Neutro', fontsize=14, fontweight='bold')
+ax.set_ylabel('Numero di utenti', fontsize=12)
+ax.set_xlabel('Categoria', fontsize=12)
+ax.grid(axis='y', alpha=0.3)
+
+# Aggiungi il valore sopra ogni barra
+for i, (cat, val) in enumerate(zip(categories, values)):
+    ax.text(i, val, str(val), ha='center', va='bottom', fontweight='bold')
+
+plt.tight_layout()
+output_path = data_dir / "graph_nodes_pro_anti_neutral.png"
+plt.savefig(output_path, dpi=300, bbox_inches='tight')
+print(f"\n✓ Grafico salvato in: {output_path}")
